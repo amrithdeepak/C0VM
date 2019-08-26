@@ -1,0 +1,91 @@
+/* 
+ * String Buffer Library
+ *
+ * 15-122 Principles of Imperative Computation
+ * This version exposes the externals, requires
+ * discipline from client! */
+
+/*** Interface ***/
+
+#use <string>
+
+
+struct strbuf {
+  int limit;
+  int len;
+  char[] buf;
+};
+bool is_strbuf(struct strbuf* sb);
+
+struct strbuf* strbuf_new(int init_limit);
+char[] strbuf_str(struct strbuf* sb);
+void strbuf_add(struct strbuf* sb, char[] str, int len);
+void strbuf_addstr(struct strbuf* sb, char[] str);
+
+
+/*** Implementation ***/
+bool is_strbuf(struct strbuf* sb) {
+    if(sb == NULL)
+        return false;
+    if(sb->limit <= 0)
+        return false;
+    if(0 > sb->len || sb->len >= sb->limit)
+        return false;
+    //@assert \length(sb->buf) == sb->limit;
+    if(string_terminated(sb->buf,sb->len))
+        return false;
+    if(sb->buf[sb->len]!= '\0')
+        return false;
+    return true;
+}
+
+struct strbuf* strbuf_new(int initial_limit)
+//@requires initial_limit > 0;
+//@ensures is_strbuf(\result);
+{
+    
+    struct strbuf* S = alloc(struct strbuf);
+    S->limit = initial_limit;
+    S->buf = alloc_array(char,initial_limit);
+    S->len = 0;
+    return S;
+
+}
+char[] strbuf_str(struct strbuf* str)
+//@requires is_strbuf(str);
+{
+    char[] strfull = alloc_array(char,str->len +1);
+    for(int i = 0; i < str->len; i++) {
+        strfull[i] = str->buf[i];
+    }
+    return strfull;
+}
+
+void strbuf_add(struct strbuf* sb, char[] str, int str_len)
+//@requires is_strbuf(sb);
+//@ensures is_strbuf(sb);
+{
+    if(sb->limit <= sb->len + str_len) {
+        char[] B = alloc_array(char, (sb->limit + str_len) * 2);
+        for(int i = 0; i < sb->len; i++) {
+            B[i] = sb->buf[i];
+        }
+        sb->buf = B;
+        sb->limit = (sb->limit + str_len) * 2;
+    }
+    for(int i = 0; i < str_len; i++) {
+        sb->buf[sb->len+i] = str[i];
+    }
+    sb->buf[sb->len+str_len] = '\0';
+    sb->len = sb->len + str_len;
+}
+void strbuf_addstr(struct strbuf* sb, char[] str)
+//@requires is_strbuf(sb);
+//@ensures is_strbuf(sb);
+{
+    int len = 0;
+    while(str[len] != '\0') {
+        len++;
+    }
+    strbuf_add(sb, str, len);
+}

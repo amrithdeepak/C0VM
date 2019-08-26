@@ -1,0 +1,27 @@
+#use <conio>
+
+int main() {
+
+    /*char[] input = alloc_array(char,4);
+    input[0] = 'a';
+    input[1] = 'b';
+    input[2] = 'c';
+    input[3] = 'd';*/
+   
+    int[] inputone = alloc_array(int,5);
+    inputone[0] = 1;
+    inputone[1] = 2;
+    inputone[2] = 3;
+    inputone[3] = 4;
+    inputone[4] = 5;
+    
+    return (inputone[3]);
+
+}
+
+/*int main() { 
+  int* a = alloc(int); 
+  *a = 42; 
+  int b = *a; 
+  return b;
+}*/
